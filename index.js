@@ -6,19 +6,25 @@ var findupSync = require('findup-sync');
 var linter = require('sass-lint');
 var path = require('path');
 
-var fileOptions = { encoding: 'utf8' };
-
 SassLinter.prototype = Object.create(Filter.prototype);
 SassLinter.prototype.constructor = SassLinter;
 
-function stripComments(string) {
-  string = string || '';
+/**
+@method SassLinter
 
-  string = string.replace(/\/\*(?:(?!\*\/)[\s\S])*\*\//g, '');
-  string = string.replace(/\/\/[^\n\r]*/g, ''); // Everything after '//'
+The constructor for our linting class. This is the method
+called when people use this module.
 
-  return string;
-};
+options = {
+  configPath: 'sass-lint.yml',
+  shouldThrowExceptions: true,
+  shouldLog: true,
+
+  logError: function(fileLint) {
+
+  },
+}
+*/
 
 function SassLinter(inputTree, options) {
   if (!(this instanceof SassLinter)) {
@@ -31,11 +37,7 @@ function SassLinter(inputTree, options) {
 
   this.inputTree = inputTree;
 
-  if (options.failOnError === false) {
-    linter.failOnError = function() {};
-  }
-
-  // TODO - Get sass-lint.yml
+  /* Set passed options */
 
   for (var key in options) {
     if (options.hasOwnProperty(key)) {
@@ -47,63 +49,110 @@ function SassLinter(inputTree, options) {
 SassLinter.prototype.extensions = ['sass', 'scss'];
 SassLinter.prototype.targetExtension = 'scss';
 
+/**
+@method build
+
+Part of the Broccoli Filter API. Runs when Filter builds the class.
+*/
+
 SassLinter.prototype.build = function() {
   var _this = this;
-  var lintingConfig;
-
   this._errors = [];
+
+  /* Make shouldLog true by default so errors are logged
+  in the console */
+
+  if (this.shouldLog === undefined) {
+    this.shouldLog = true;
+  }
+
+
+  /* Set a default linting config path if one wasn't
+  passed */
 
   if (!this.configPath) {
     this.configPath = 'sass-lint.yml';
   }
 
-  if (!this.lintingConfig) {
-    lintingConfig = this.getConfig();
 
-    if (lintingConfig) {
-      this.lintingConfig = lintingConfig;
-    }
+  /* Override sass-lint's failOnError if we shouldn't
+  throw exceptions. */
+
+  if (this.shouldThrowExceptions === false) {
+    linter.failOnError = function() {};
   }
 
+  /* Now build and lint! */
+
   return Filter.prototype.build.call(this).finally(function() {
+
+    /* _errors is created by calls to logError() */
+
     var errors = _this._errors;
 
-    if (errors.length && !_this.silence) {
-      console.log(linter.format(errors)); // Display errors
+    /* If there are errors, format and show them in the console */
+
+    if (errors.length && _this.shouldLog) {
+      console.log(linter.format(errors));
     }
   });
 }
 
+/**
+@method getConfig
+@param [rootPath] Optional root of where to start looking up
+for the config file from
+
+Call at any time to get the linting config that can be passed
+to linter.lint().
+
+The config file should exist 'above' our working directory in the
+file heirachy.
+*/
+
 SassLinter.prototype.getConfig = function(rootPath) {
   var configPath;
 
-  if (!rootPath) {
-    rootPath = process.cwd();
-  }
+  /* See if a sass-lint.yml file exists in the project (or
+  whatever name we specified at options.configPath) */
 
   configPath = findupSync(this.configPath, {
-    cwd: rootPath,
+    cwd: rootPath || process.cwd(),
     nocase: true,
   });
 
   if (configPath) {
     try {
+
+      /* Use the path we found to call sass-lint's public
+      getConfig method, which returns the config object */
+
       return linter.getConfig({}, configPath);
     } catch (error) {
-      this.console.error(chalk.red('Error occured parsing sass-lint.yml'));
-      this.console.error(error.stack);
+      console.error(chalk.red('Error occured parsing sass-lint.yml'));
+      console.error(error.stack);
 
       return null;
     }
   }
 }
 
+/**
+@method processString
+
+Part of the Broccoli Filter API. Takes the content of each file Filter
+finds and operates on it.
+
+In this case, we lint the contents of each file using sass-lint's
+lint() method.
+*/
+
 SassLinter.prototype.processString = function(content, relativePath) {
   var lint = linter.lintText({
     text: content,
     format: path.extname(relativePath).replace('.', ''),
     filename: relativePath
-  }, this.lintingConfig);
+  }, this.getConfig());
 
   if (lint.errorCount || lint.warningCount) {
     this.logError(lint);
@@ -111,6 +160,17 @@ SassLinter.prototype.processString = function(content, relativePath) {
 
   return content; // Return unmodified string
 };
+
+/**
+@method logError
+@param fileLint
+
+What to do with each error the linter comes across. By default, we push
+it to the _errors array for formatting at a later point in time.
+
+It is useful to override this when testing the library (i.e. to parse
+the errors the linter finds).
+*/
 
 SassLinter.prototype.logError = function(fileLint) {
   this._errors.push(fileLint);
