@@ -3,3 +3,7 @@
   @extend %test;
   background-image: url("bubg");
 }
+
+#should-be-allowed-by-sass-lint-yml {
+  color: green;
+}
