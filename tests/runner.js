@@ -34,7 +34,8 @@ describe('broccoli-sass-hint', function() {
     // console.log('bufuif');
 
     var node = new SassLinter(sourcePath, {
-      // logError: function(message) { loggerOutput.push(message) }
+      logError: function(message) { console.log(message) },
+      silence: true,
     });
 
     builder = new broccoli.Builder(node);
