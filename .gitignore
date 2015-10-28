@@ -1,0 +1,12 @@
+npm-debug.log
+
+.DS_Store
+*.swp
+
+*/node_modules/
+*/bower_components/
+
+node_modules/
+bower_components/
+
+tmp/
