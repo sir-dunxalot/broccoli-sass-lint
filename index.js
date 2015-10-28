@@ -1,10 +1,8 @@
 'use strict';
 
 var Filter = require('broccoli-filter');
-var chalk = require('chalk');
-var fs = require('fs');
-var path = require('path');
 var linter = require('sass-lint');
+var path = require('path');
 
 SassLinter.prototype = Object.create(Filter.prototype);
 SassLinter.prototype.constructor = SassLinter;

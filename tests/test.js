@@ -1,13 +1,9 @@
 'use strict';
 
 var SassLinter = require('..');
+var assert = require('assert');
 var broccoli = require('broccoli');
 var fs = require('fs');
-// var rimraf = require('rimraf');
-// var chalk = require('chalk');
-// var glob = require('glob');
-// var Mocha = require('mocha');
-var assert = require('assert');
 var linter = require('sass-lint');
 
 var builder, errors;
