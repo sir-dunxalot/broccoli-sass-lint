@@ -3,23 +3,23 @@
 var SassLinter = require('..');
 var broccoli = require('broccoli');
 var fs = require('fs');
-var rimraf = require('rimraf');
-var chalk = require('chalk');
-var glob = require('glob');
+// var rimraf = require('rimraf');
+// var chalk = require('chalk');
+// var glob = require('glob');
 // var Mocha = require('mocha');
 var assert = require('assert');
+var linter = require('sass-lint');
 
-var builder;
+var builder, errors;
 
 describe('broccoli-sass-hint', function() {
-  var loggerOutput;
 
   function readFile(path) {
     return fs.readFileSync(path, { encoding: 'utf8' });
   }
 
   beforeEach(function() {
-    loggerOutput = [];
+    errors = [];
   });
 
   afterEach(function() {
@@ -28,20 +28,21 @@ describe('broccoli-sass-hint', function() {
     }
   });
 
-  it('uses the jshintrc as configuration for hinting', function() {
+  it('The linter should catch errors', function() {
     var sourcePath = 'tests/fixtures';
 
-    // console.log('bufuif');
-
     var node = new SassLinter(sourcePath, {
-      logError: function(message) { console.log(message) },
+      logError: function(fileLint) { errors.push(fileLint) },
       silence: true,
     });
 
     builder = new broccoli.Builder(node);
 
     return builder.build().then(function() {
-      // expect(loggerOutput.join('\n')).to.not.match(/Missing semicolon./)
+
+      assert.ok(linter.format(errors).indexOf('Extends should come before declarations') > -1,
+        'Should pick up linting error based on order');
+
     });
   });
 });
