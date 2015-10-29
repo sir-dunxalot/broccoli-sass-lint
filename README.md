@@ -28,7 +28,9 @@ Options can be passed as a second argument to `SassLinter()`.
 The defaults are shown below;
 
 ```js
-var SassLinter = require('broccoli-sass-lint', {
+var SassLinter = require('broccoli-sass-lint');
+
+var node = new SassLinter('app/styles', {
   configPath: 'sass-lint.yml',
   shouldThrowExceptions: true,
   shouldLog: true,
