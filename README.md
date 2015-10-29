@@ -1,4 +1,4 @@
-Broccoli Sass Lint [![Build Status](https://travis-ci.org/sir-dunxalot/broccoli-sass-lint.svg?branch=master)](https://travis-ci.org/sir-dunxalot/broccoli-sass-lint)
+Broccoli Sass Lint [![Build Status](https://travis-ci.org/sir-dunxalot/broccoli-sass-lint.svg?branch=master)](https://travis-ci.org/sir-dunxalot/broccoli-sass-lint) [![npm](https://img.shields.io/npm/v/broccoli-sass-lint.svg)](https://www.npmjs.com/package/broccoli-sass-lint)
 ======
 
 This is a pure Node.js SASS linter for Broccoli-based applications and plugins.
@@ -16,6 +16,10 @@ var SassLinter = require('broccoli-sass-lint');
 
 var node = new SassLinter('app/styles'); // Or wherever the files are
 ```
+
+Linting configuration can be added in a `sass-lint.yml` file as expected and documented by [Sass Lint](https://github.com/sasstools/sass-lint).
+
+[Here is a sample config file](https://github.com/sasstools/sass-lint/blob/develop/docs/sass-lint.yml).
 
 ## Options
 
