@@ -23,10 +23,6 @@ function buildAndLint(sourcePath) {
 
 describe('broccoli-sass-hint', function() {
 
-  function readFile(path) {
-    return fs.readFileSync(path, { encoding: 'utf8' });
-  }
-
   beforeEach(function() {
     errors = [];
   });

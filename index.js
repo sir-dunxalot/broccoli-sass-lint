@@ -144,7 +144,7 @@ Part of the Broccoli Filter API. Takes the content of each file Filter
 finds and operates on it.
 
 In this case, we lint the contents of each file using sass-lint's
-lint() method.
+lintText() method.
 */
 
 SassLinter.prototype.processString = function(content, relativePath) {
