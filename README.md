@@ -17,7 +17,18 @@ var SassLinter = require('broccoli-sass-lint');
 var node = new SassLinter('app/styles'); // Or wherever the files are
 ```
 
+## Configuration
+
 Linting configuration can be added in a `sass-lint.yml` file as expected and documented by [Sass Lint](https://github.com/sasstools/sass-lint).
+
+For example:
+
+```yml
+rules:
+  extends-before-mixins: 2 # throws error
+  placeholders-in-extend: 1 # log warning
+  extends-before-declarations: 0 # no errors or warnings
+```
 
 [Here is a sample config file](https://github.com/sasstools/sass-lint/blob/develop/docs/sass-lint.yml).
 
