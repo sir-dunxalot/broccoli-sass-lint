@@ -6,6 +6,8 @@ var findupSync = require('findup-sync');
 var linter = require('sass-lint');
 var path = require('path');
 
+var jsStringEscape = require('js-string-escape');
+
 SassLinter.prototype = Object.create(Filter.prototype);
 SassLinter.prototype.constructor = SassLinter;
 
@@ -43,6 +45,11 @@ function SassLinter(inputTree, options) {
     if (options.hasOwnProperty(key)) {
       this[key] = options[key]
     }
+  }
+
+  if (!this.disableTestGenerator) {
+    // If we are generating tests, the extension of the test files
+    this.targetExtension = 'sass-lint-test.js';
   }
 };
 
@@ -93,7 +100,7 @@ SassLinter.prototype.build = function() {
     /* If there are errors, format and show them in the console */
 
     if (errors.length && _this.shouldLog) {
-      console.log(linter.format(errors));
+      console.log(_this.formatErrors(errors));
     }
   });
 }
@@ -158,8 +165,50 @@ SassLinter.prototype.processString = function(content, relativePath) {
     this.logError(lint);
   }
 
+  if (!this.disableTestGenerator) {
+    // Return generated test
+    return this.testGenerator(relativePath, this.formatErrors([lint]));
+  }
+
   return content; // Return unmodified string
 };
+
+
+/**
+@method testGenerator
+
+If test generation is enabled this method will generate a qunit test that will
+be included and run by PhantomJS. If there are any errors, the test will fail
+and print the reasons for failing. If there are no errors, the test will pass.
+*/
+
+SassLinter.prototype.testGenerator = function(relativePath, errors) {
+  if (errors) {
+    errors = this.escapeErrorString('\n' + errors);
+  }
+
+  return "module('Sass Lint - " + path.dirname(relativePath) + "');\n" +
+         "test('" + relativePath + " should pass sass-lint', function() {\n" +
+         "  ok(" + !errors + ", '" + relativePath + " should pass sass-lint." + errors + "');\n" +
+         "});\n";
+};
+
+/**
+@method formatErrors
+
+Alias for the linter format errors method.
+*/
+SassLinter.prototype.formatErrors = function(errors) {
+  return linter.format(errors);
+};
+
+/**
+@method escapeErrorString
+
+Alias for jsStringEscape. Sass strings can cause errors in JS (quotation marks
+and such), but escaping them like any other JS string works.
+*/
+SassLinter.prototype.escapeErrorString = jsStringEscape;
 
 /**
 @method logError
