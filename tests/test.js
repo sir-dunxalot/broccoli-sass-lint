@@ -3,7 +3,6 @@
 var SassLinter = require('..');
 var broccoli = require('broccoli');
 var chai = require('chai');
-var fs = require('fs');
 var linter = require('sass-lint');
 
 var assert = chai.assert;
@@ -21,7 +20,7 @@ function buildAndLint(sourcePath) {
   return builder.build();
 }
 
-describe('broccoli-sass-hint', function() {
+describe('broccoli-sass-lint', function() {
 
   beforeEach(function() {
     errors = [];
