@@ -183,7 +183,7 @@ processed.
 Here, we ignore any files ignored in the sass-lint.yml file, if defined..
 */
 SassLinter.prototype.getDestFilePath = function(relativePath) {
-  var config = this.getConfig();
+  var config = this.getConfig() || { files: {} };
   var includedFiles = null;
   var ignoredFiles = null;
   var ignored = false;
