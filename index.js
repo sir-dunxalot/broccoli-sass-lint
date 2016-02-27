@@ -220,7 +220,7 @@ SassLinter.prototype.getDestFilePath = function(relativePath) {
     return null;
   }
 
-  return relativePath;
+  return Filter.prototype.getDestFilePath.apply(this, arguments);
 }
 
 /**
