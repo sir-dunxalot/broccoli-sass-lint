@@ -7,6 +7,7 @@ var linter = require('sass-lint');
 var path = require('path');
 
 var jsStringEscape = require('js-string-escape');
+var minimatch = require('minimatch');
 
 SassLinter.prototype = Object.create(Filter.prototype);
 SassLinter.prototype.constructor = SassLinter;
@@ -173,6 +174,54 @@ SassLinter.prototype.processString = function(content, relativePath) {
   return content; // Return unmodified string
 };
 
+/**
+@method getDestFilePath
+
+Part of the Broccoli Filter API. Determines whether the source file should be
+processed.
+
+Here, we ignore any files ignored in the sass-lint.yml file, if defined..
+*/
+SassLinter.prototype.getDestFilePath = function(relativePath) {
+  var config = this.getConfig() || { files: {} };
+  var includedFiles = null;
+  var ignoredFiles = null;
+  var ignored = false;
+
+  if (config.files.include) {
+    includedFiles = config.files.include;
+  }
+
+  if (config.files.ignore) {
+    ignoredFiles = config.files.ignore;
+  }
+
+  // Only match explicitly included files.
+  if (typeof includedFiles === 'string') {
+    if (!minimatch(relativePath, includedFiles)) {
+      return null;
+    }
+  }
+
+  if (ignoredFiles instanceof Array && ignoredFiles.length > 0) {
+    ignoredFiles.forEach(function (ignorePath) {
+      if (!ignored && minimatch(relativePath, ignorePath)) {
+        ignored = true;
+      }
+    });
+  }
+  else if (typeof ignoredFiles === 'string') {
+    if (!ignored && minimatch(relativePath, ignoredFiles)) {
+      ignored = true;
+    }
+  }
+
+  if (ignored) {
+    return null;
+  }
+
+  return Filter.prototype.getDestFilePath.apply(this, arguments);
+}
 
 /**
 @method testGenerator
