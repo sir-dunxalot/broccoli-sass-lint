@@ -40,7 +40,7 @@ The defaults are shown below;
 var SassLinter = require('broccoli-sass-lint');
 
 var node = new SassLinter('app/styles', {
-  configPath: 'sass-lint.yml',
+  configPath: '.sass-lint.yml',
   shouldThrowExceptions: true,
   shouldLog: true,
 });
@@ -50,7 +50,7 @@ var node = new SassLinter('app/styles', {
 
 | Type    | String          |
 |---------|-----------------|
-| Default | 'sass-lint.yml' |
+| Default | '.sass-lint.yml' |
 
 A name of the file your config is contained in. This should be a `.yml` file, preferrably in the root of the Broccoli project.
 
