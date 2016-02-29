@@ -29,7 +29,7 @@
     "mocha": "^2.3.3"
   },
   "dependencies": {
-    "broccoli-filter": "^1.2.2",
+    "broccoli-persistent-filter": "^1.1.8",
     "chalk": "^1.1.1",
     "findup-sync": "^0.3.0",
     "js-string-escape": "1.0.0",
