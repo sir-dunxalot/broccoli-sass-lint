@@ -1,6 +1,6 @@
 'use strict';
 
-var Filter = require('broccoli-filter');
+var Filter = require('broccoli-persistent-filter');
 var chalk = require('chalk');
 var findupSync = require('findup-sync');
 var linter = require('sass-lint');
@@ -79,7 +79,7 @@ SassLinter.prototype.build = function() {
   passed */
 
   if (!this.configPath) {
-    this.configPath = 'sass-lint.yml';
+    this.configPath = '.sass-lint.yml';
   }
 
 
