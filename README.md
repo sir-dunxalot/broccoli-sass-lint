@@ -93,6 +93,37 @@ var SassLinter = require('broccoli-sass-lint', {
 
 When you override `logError()` this plugin won't log any warnings or errors.
 
+### testGenerator()
+
+| Type       | Function                        |
+|------------|---------------------------------|
+| function   | fileLint (relativePath, errors) |
+
+The function used to generate test modules. You can provide a custom function for your client side testing framework of choice.
+
+The function receives the following arguments:
+
+* `relativePath` - The relative path to the file being tested.
+* `errors` - A generated string of errors found.
+
+Default generates QUnit style tests:
+
+```javascript
+var path = require('path');
+
+function(relativePath, errors) {
+  if (errors) {
+    errors = this.escapeErrorString('\n' + errors);
+  }
+
+  return "module('Sass Lint - " + path.dirname(relativePath) + "');\n" +
+         "test('" + relativePath + " should pass sass-lint', function() {\n" +
+         "  assert.ok(" + !errors + ", '" + relativePath + " should pass sass-lint." + errors + "');\n" +
+         "});\n";
+};
+```
+---
+
 ## Development
 
 All tests are currently contained in `tests/test.js`. Tests can be ran with:
