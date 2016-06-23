@@ -95,9 +95,9 @@ When you override `logError()` this plugin won't log any warnings or errors.
 
 ### testGenerator()
 
-| Type       | Function                        |
-|------------|---------------------------------|
-| function   | fileLint (relativePath, errors) |
+| Type       | Function                                    |
+|------------|---------------------------------------------|
+| function   | fileLint (relativePath, errors, errorCount) |
 
 The function used to generate test modules. You can provide a custom function for your client side testing framework of choice.
 
@@ -105,6 +105,7 @@ The function receives the following arguments:
 
 * `relativePath` - The relative path to the file being tested.
 * `errors` - A generated string of errors found.
+* `errorCount` - An integer of the number of errors found per file.
 
 Default generates QUnit style tests:
 
@@ -122,6 +123,17 @@ function(relativePath, errors) {
          "});\n";
 };
 ```
+
+Example of using errorCount with mocha and chai with `errorCount`:
+
+```javascript
+"describe('Sass Lint - " + path.dirname(relativePath) + "', function() { \n" +
+" it('" + relativePath + " should pass sass-lint', function() {\n" +
+"   expect(" + errorCount + ").to.eq(0);\n" +
+" });\n" +
+"});\n";
+```
+
 ---
 
 ## Development
