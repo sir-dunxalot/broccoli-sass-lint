@@ -1,6 +1,6 @@
 {
   "name": "broccoli-sass-lint",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Pure Node.js scss/sass linting for Broccoli-based projects",
   "main": "index.js",
   "scripts": {
