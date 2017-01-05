@@ -237,8 +237,8 @@ SassLinter.prototype.testGenerator = function(relativePath, errors, errorCount) 
   }
 
   return "QUnit.module('Sass Lint - " + path.dirname(relativePath) + "');\n" +
-         "QUnit.test('" + relativePath + " should pass sass-lint', function() {\n" +
-         "  ok(" + !errors + ", '" + relativePath + " should pass sass-lint." + errors + "');\n" +
+         "QUnit.test('" + relativePath + " should pass sass-lint', function(assert) {\n" +
+         "  assert.ok(" + !errors + ", '" + relativePath + " should pass sass-lint." + errors + "');\n" +
          "});\n";
 };
 
